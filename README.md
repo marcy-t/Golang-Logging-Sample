@@ -1,0 +1,2 @@
+# Golang-Logging-Sample
+LoggingSample
