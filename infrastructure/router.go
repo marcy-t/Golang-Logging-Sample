@@ -19,8 +19,8 @@ func NewRouter(controller *ControllHandler) (root *mux.Router) {
 	api := root.PathPrefix("/api/v1/").Subrouter()
 	// SamplePath
 	common := controller.Common
-	api.HandleFunc("/ping", eh(common.SampleHandler)).Methods(http.MethodGet)
-	api.HandleFunc("/taglist", eh(common.TagList)).Methods(http.MethodGet)
+	api.HandleFunc("/ping", eh(common.SampleHandler)).Methods(http.MethodGet, "OPTIONS")
+	api.HandleFunc("/taglist", eh(common.TagList)).Methods(http.MethodGet, "OPTIONS")
 	return
 }
 

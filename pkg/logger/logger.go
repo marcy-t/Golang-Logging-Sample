@@ -101,14 +101,17 @@ func ResponseJSON(w http.ResponseWriter, object interface{}, appResp *Applicatio
 		Error(
 			GetApplicationError(err).AddMessage("An error has occured JsonMarshal "),
 			tags...,
-		) // 暫定
-		// ErrorResponseのJsonつくらないといけない
+		)
+		return
 	}
 
 	print(appResp.AppCode, Level(appResp.Level), appResp.Message, tags...)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(resp)))
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "*") // debug用
+
 	w.WriteHeader(appResp.StatusCode)
 	w.Write(resp)
 }
