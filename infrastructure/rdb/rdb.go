@@ -30,7 +30,7 @@ func NewHandler() (h db.SqlHandler, err error) {
 		User:     "user",
 		Password: "password",
 	}
-	connectionString := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", conf.User, conf.Password, conf.Host, conf.Database)
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true", conf.User, conf.Password, conf.Host, conf.Database)
 
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
