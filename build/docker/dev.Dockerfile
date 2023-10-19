@@ -65,6 +65,9 @@ RUN go install github.com/cespare/reflex@latest && \
 # Copy from pkg source to the container.
 COPY ./pkg /app/pkg
 
+# Install dependencies for this project.
+RUN go mod download
+
 # Open the port for  server.
 EXPOSE 8080
 
