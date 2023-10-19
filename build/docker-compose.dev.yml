@@ -1,0 +1,55 @@
+version: '3.8'                 # docker-composeのversionを指定
+
+x-settings: &DEFAULT_SETTINGS
+  tty: true
+  command: "bash -c \"reflex -sr '(.go$$|go\\.mod)' -- go run ./cmd/main.go\""
+  restart: always
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "3m"
+      max-file: "1"
+
+x-build: &BUILD_SETTINGS
+  context: ../
+  dockerfile: build/docker/dev.Dockerfile
+  target: local
+
+services:
+  insight-services:
+    container_name: insight-tracer
+    image: insight-dev:latest
+    platform: linux/amd64
+    build:
+      <<: *BUILD_SETTINGS
+    <<: *DEFAULT_SETTINGS
+    volumes:
+      - ../go.mod:/app/go.mod
+      - ../go.sum:/app/go.sum
+      - ../cmd/instagram_insight:/app/cmd
+      - ../domain:/app/domain
+      - ../infrastructure:/app/infrastructure
+      - ../usecase:/app/usecase
+      - ../pkg:/app/pkg
+    ports:
+      - "9091:8080"
+    restart: always 
+
+
+  # db:
+  #   container_name: mysql_db
+  #   image: mysql:8.0
+  #   restart: always
+  #   environment:
+  #     - MYSQL_DATABASE=${DB_NAME}
+  #     - MYSQL_USER=${DB_USER}
+  #     - MYSQL_PASSWORD=${DB_PASS}
+  #     - MYSQL_ROOT_PASSWORD=${DB_PASS}
+  #     - TZ=${TZ}
+  #   ports:
+  #     - ${DB_PORT}:3306
+
+  #   volumes:
+  #     - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+  #     - ./docker/mysql/conf.d:/etc/mysql/conf.d
+  #     - ./log/mysql:/var/log/mysql

@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
-	db "github.com/marcy-t/Golang-Logging-Sample/pkg/interfaces/database"
+	db "github.com/Golang-Logging-Sample/pkg/interfaces/database"
 
+	"github.com/Golang-Logging-Sample/pkg/logger"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/marcy-t/Golang-Logging-Sample/pkg/logger"
 )
 
 type SqlHandler struct {

@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	"github.com/marcy-t/Golang-Logging-Sample/domain"
+	"github.com/Golang-Logging-Sample/domain"
 )
 
 // レシーバー用途オンリー

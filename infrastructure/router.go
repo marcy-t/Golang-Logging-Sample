@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	h "github.com/Golang-Logging-Sample/pkg/handlers"
+	"github.com/Golang-Logging-Sample/pkg/logger"
 	"github.com/gorilla/mux"
-	h "github.com/marcy-t/Golang-Logging-Sample/pkg/handlers"
-	"github.com/marcy-t/Golang-Logging-Sample/pkg/logger"
 )
 
 // Router
@@ -16,7 +16,7 @@ func NewRouter(controller *ControllHandler) (root *mux.Router) {
 	root.NotFoundHandler = http.HandlerFunc(h.NotFoundHandler)
 	eh := errorRoutingDetected
 	// PathPrefix
-	api := root.PathPrefix("/api/v1/").Subrouter()
+	api := root.PathPrefix("/api/v1").Subrouter()
 	// SamplePath
 	common := controller.Common
 	api.HandleFunc("/ping", eh(common.SampleHandler)).Methods(http.MethodGet, "OPTIONS")
@@ -25,7 +25,7 @@ func NewRouter(controller *ControllHandler) (root *mux.Router) {
 }
 
 /*
-	各パス先でおきたエラーやパニックを検知
+各パス先でおきたエラーやパニックを検知
 */
 func errorRoutingDetected(handler func(http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

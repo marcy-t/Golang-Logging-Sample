@@ -3,7 +3,7 @@ package interfaces
 import (
 	"context"
 
-	"github.com/marcy-t/Golang-Logging-Sample/domain"
+	"github.com/Golang-Logging-Sample/domain"
 )
 
 type CommonInteractor interface {

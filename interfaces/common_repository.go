@@ -3,9 +3,9 @@ package interfaces
 import (
 	"context"
 
-	"github.com/marcy-t/Golang-Logging-Sample/domain"
-	db "github.com/marcy-t/Golang-Logging-Sample/pkg/interfaces/database"
-	"github.com/marcy-t/Golang-Logging-Sample/pkg/logger"
+	"github.com/Golang-Logging-Sample/domain"
+	db "github.com/Golang-Logging-Sample/pkg/interfaces/database"
+	"github.com/Golang-Logging-Sample/pkg/logger"
 )
 
 type CommonRepository struct {

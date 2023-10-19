@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"github.com/marcy-t/Golang-Logging-Sample/domain"
-	"github.com/marcy-t/Golang-Logging-Sample/pkg/logger"
+	"github.com/Golang-Logging-Sample/domain"
+	"github.com/Golang-Logging-Sample/pkg/logger"
 )
 
 type CommonInteractor struct {
@@ -12,7 +12,7 @@ type CommonInteractor struct {
 }
 
 /*
-	interface層にある関数を使用しロジックを作成する
+interface層にある関数を使用しロジックを作成する
 */
 func (i *CommonInteractor) UseCaseSampleRepository(ctx context.Context) (resp []*domain.User, err error) {
 	// Interface

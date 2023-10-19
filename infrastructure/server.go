@@ -1,9 +1,9 @@
 package infrastructure
 
 import (
+	"github.com/Golang-Logging-Sample/interfaces"
+	db "github.com/Golang-Logging-Sample/pkg/interfaces/database"
 	"github.com/gorilla/mux"
-	"github.com/marcy-t/Golang-Logging-Sample/interfaces"
-	db "github.com/marcy-t/Golang-Logging-Sample/pkg/interfaces/database"
 )
 
 // ルーティングでコントローラを別にしたい場合は新規で追加

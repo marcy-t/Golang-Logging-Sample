@@ -1,4 +1,4 @@
-module github.com/marcy-t/Golang-Logging-Sample
+module github.com/Golang-Logging-Sample
 
 go 1.15
 

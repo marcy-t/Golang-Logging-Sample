@@ -6,9 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/marcy-t/Golang-Logging-Sample/infrastructure"
-	"github.com/marcy-t/Golang-Logging-Sample/infrastructure/rdb"
-	"github.com/marcy-t/Golang-Logging-Sample/pkg/logger"
+	"github.com/Golang-Logging-Sample/infrastructure"
+	"github.com/Golang-Logging-Sample/pkg/logger"
 )
 
 func main() {
@@ -19,25 +18,27 @@ func main() {
 		)
 	}
 
-	db, err := rdb.NewHandler()
-	if err != nil {
-		logger.Fatal(
-			logger.GetApplicationError(err).
-				AddMessage("Faild to get database connection."),
-		)
-	}
+	// db, err := rdb.NewHandler()
+	// if err != nil {
+	// 	logger.Fatal(
+	// 		logger.GetApplicationError(err).
+	// 			AddMessage("Faild to get database connection."),
+	// 	)
+	// }
 
-	handler := infrastructure.NewServer(db)
+	// handler := infrastructure.NewServer(db)
+
+	handler := infrastructure.NewServer(nil)
 
 	// Port Conf
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "9090"
+		port = "8080"
 	}
 
 	srv := &http.Server{
 		Handler:      handler,
-		Addr:         fmt.Sprintf("127.0.0.1:%s", port),
+		Addr:         fmt.Sprintf("0.0.0.0:%s", port),
 		WriteTimeout: 180 * time.Second,
 		ReadTimeout:  180 * time.Second,
 		IdleTimeout:  300 * time.Second,

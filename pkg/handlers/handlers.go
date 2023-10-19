@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/marcy-t/Golang-Logging-Sample/pkg/logger"
+	"github.com/Golang-Logging-Sample/pkg/logger"
 )
 
 // Return Error
