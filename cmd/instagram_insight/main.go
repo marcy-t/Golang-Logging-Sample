@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Golang-Logging-Sample/infrastructure"
+	"github.com/Golang-Logging-Sample/infrastructure/rdb"
 	"github.com/Golang-Logging-Sample/pkg/logger"
 )
 
@@ -18,17 +19,15 @@ func main() {
 		)
 	}
 
-	// db, err := rdb.NewHandler()
-	// if err != nil {
-	// 	logger.Fatal(
-	// 		logger.GetApplicationError(err).
-	// 			AddMessage("Faild to get database connection."),
-	// 	)
-	// }
+	db, err := rdb.NewHandler()
+	if err != nil {
+		logger.Fatal(
+			logger.GetApplicationError(err).
+				AddMessage("Faild to get database connection."),
+		)
+	}
 
-	// handler := infrastructure.NewServer(db)
-
-	handler := infrastructure.NewServer(nil)
+	handler := infrastructure.NewServer(db)
 
 	// Port Conf
 	port := os.Getenv("PORT")
@@ -53,5 +52,4 @@ func main() {
 				AddMessage("Server Down..."),
 		)
 	}
-
 }

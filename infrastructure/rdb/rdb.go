@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
 	"time"
 
 	db "github.com/Golang-Logging-Sample/pkg/interfaces/database"
@@ -25,10 +26,10 @@ type dbSettings struct {
 
 func NewHandler() (h db.SqlHandler, err error) {
 	conf := dbSettings{
-		Host:     "localhost",
-		Database: "sample_db",
-		User:     "user",
-		Password: "password",
+		Host:     os.Getenv("MYSQL_HOST"),
+		Database: os.Getenv("MYSQL_DATABASE"),
+		User:     os.Getenv("MYSQL_USER"),
+		Password: os.Getenv("MYSQL_PASSWORD"),
 	}
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true", conf.User, conf.Password, conf.Host, conf.Database)
 

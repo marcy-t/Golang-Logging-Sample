@@ -15,8 +15,31 @@ x-build: &BUILD_SETTINGS
   dockerfile: build/docker/dev.Dockerfile
   target: local
 
+x-envoy: &BUILD_ENVOY_SETTINGS
+  context: ../
+  dockerfile: build/docker/envoy.Dockerfile
+  target: local_envoy
+
+x-db: &BUILD_MYSQL_SETTINGS
+  context: ../
+  dockerfile: build/docker/mysql.Dockerfile
+  target: local_db
+
 services:
-  insight-services:
+  envoy:
+    container_name: envoy-container
+    platform: linux/amd64
+    build:
+      <<: *BUILD_ENVOY_SETTINGS
+    ports:
+      - "9900:9900"
+      - "8081:8081"
+    restart: always
+    volumes:
+      # - ./proxy:/etc/envoy
+      - ../deployment/proxy/envoy.yaml:/etc/envoy/envoy.yaml
+
+  insight:
     container_name: insight-tracer
     image: insight-dev:latest
     platform: linux/amd64
@@ -31,25 +54,31 @@ services:
       - ../infrastructure:/app/infrastructure
       - ../usecase:/app/usecase
       - ../pkg:/app/pkg
+    env_file:
+      - ../.env
     ports:
       - "9091:8080"
     restart: always 
+    depends_on:
+      - envoy
 
+  db:
+    container_name: mysql_db
+    platform: linux/amd64
+    build:
+      <<: *BUILD_MYSQL_SETTINGS
+    restart: always
+    env_file:
+      - ../.env
+    ports:
+      - 3306:3306
+    volumes:
+      - db-store:/var/lib/mysql
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
+      - ./log/mysql:/var/log/mysql
+    depends_on:
+      - insight
 
-  # db:
-  #   container_name: mysql_db
-  #   image: mysql:8.0
-  #   restart: always
-  #   environment:
-  #     - MYSQL_DATABASE=${DB_NAME}
-  #     - MYSQL_USER=${DB_USER}
-  #     - MYSQL_PASSWORD=${DB_PASS}
-  #     - MYSQL_ROOT_PASSWORD=${DB_PASS}
-  #     - TZ=${TZ}
-  #   ports:
-  #     - ${DB_PORT}:3306
-
-  #   volumes:
-  #     - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
-  #     - ./docker/mysql/conf.d:/etc/mysql/conf.d
-  #     - ./log/mysql:/var/log/mysql
+volumes:
+  db-store:
