@@ -12,7 +12,7 @@ static_resources:
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
           stat_prefix: ingress_http
-          codec_type: HTTP1
+          codec_type: HTTP1 # AUTO or HTTP1 or HTTP2
           route_config:
             name: local_route
             virtual_hosts:
@@ -20,7 +20,7 @@ static_resources:
               domains: ["*"]
               routes:
               - match:
-                  prefix: "/"  # すべてのパスをマッチ
+                  prefix: "/api/insight/v1"  # API Version
                 route:
                   cluster: insight_tracer_cluster
           http_filters:
