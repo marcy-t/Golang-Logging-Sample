@@ -68,6 +68,7 @@ services:
       - ../cmd/instagram_insight:/app/cmd
       - ../domain:/app/domain
       - ../infrastructure:/app/infrastructure
+      - ../interfaces:/app/interfaces
       - ../usecase:/app/usecase
       - ../pkg:/app/pkg
     env_file:

@@ -21,6 +21,11 @@ static_resources:
                   prefix: "/api/insight/v1"  # API Version
                 route:
                   cluster: insight_tracer_cluster
+                  retry_policy: # リトライポリシー
+                    retry_on: 5xx,gateway-error,connect-failure
+                    num_retries: 5
+                    per_try_timeout: 10s
+                  timeout: 10s
           http_filters:
           - name: envoy.filters.http.router
             typed_config:
@@ -44,6 +49,15 @@ static_resources:
               socket_address:
                 address: insight-tracer  # アップストリームサービスのホスト名(Container Name)
                 port_value: 8080     # アップストリームサービスのポート番号
+    health_checks:
+      timeout: 10s
+      interval: 60s
+      unhealthy_threshold: 2
+      healthy_threshold: 2
+      http_health_check:
+        path: /api/insight/v1/ping
+        codec_client_type: HTTP1
+        expected_statuses:
 admin: #DEBUG
   access_log_path: "/tmp/admin_access.log"
   address:
