@@ -27,7 +27,7 @@ x-db: &BUILD_MYSQL_SETTINGS
 
 services:
   envoy:
-    container_name: envoy-container
+    container_name: envoy
     platform: linux/amd64
     build:
       <<: *BUILD_ENVOY_SETTINGS
@@ -36,8 +36,7 @@ services:
       - "8081:8081"
     restart: always
     volumes:
-      # - ./proxy:/etc/envoy
-      - ../deployment/proxy/envoy.yaml:/etc/envoy/envoy.yaml
+      - ../deployment/proxy/envoy.yaml:/etc/envoy/envoy.yaml # DEBUG
 
   insight:
     container_name: insight-tracer
