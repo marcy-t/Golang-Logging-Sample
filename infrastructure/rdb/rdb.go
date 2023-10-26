@@ -22,16 +22,19 @@ type dbSettings struct {
 	User     string
 	Password string
 	Database string
+	Port     string
 }
 
 func NewHandler() (h db.SqlHandler, err error) {
 	conf := dbSettings{
-		Host:     os.Getenv("MYSQL_HOST"),
+		Host:     os.Getenv("MYSQL_PROXY_HOST"),
 		Database: os.Getenv("MYSQL_DATABASE"),
 		User:     os.Getenv("MYSQL_USER"),
 		Password: os.Getenv("MYSQL_PASSWORD"),
+		Port:     os.Getenv("MYSQL_PORT"),
 	}
-	connectionString := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true", conf.User, conf.Password, conf.Host, conf.Database)
+
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", conf.User, conf.Password, conf.Host, conf.Port, conf.Database)
 
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {

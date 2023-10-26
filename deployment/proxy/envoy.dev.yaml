@@ -42,7 +42,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: insight-tracer  # アップストリームサービスのホスト名
+                address: insight-tracer  # アップストリームサービスのホスト名(Container Name)
                 port_value: 8080     # アップストリームサービスのポート番号
 admin: #DEBUG
   access_log_path: "/tmp/admin_access.log"

@@ -1,0 +1,34 @@
+static_resources:
+  listeners:
+    - name: mysql_listener
+      address:
+        socket_address:
+          address: "0.0.0.0" # リッスンするIPアドレス
+          port_value: 3307 # リッスンするポート番号
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.tcp_proxy
+              typed_config:
+                "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy"
+                stat_prefix: tcp_proxy_mysql
+                cluster: mysql_cluster
+  clusters:
+    - name: mysql_cluster
+      connect_timeout: "60s"
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: mysql_cluster
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: mysql_db  # アップストリームサービスのホスト名(Container Name)
+                      port_value: 3306 # アップストリームサービスのポート番号
+admin: #DEBUG
+  access_log_path: "/tmp/admin_access.log"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901

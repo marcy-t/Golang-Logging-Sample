@@ -15,10 +15,15 @@ x-build: &BUILD_SETTINGS
   dockerfile: build/docker/dev.Dockerfile
   target: local
 
-x-envoy: &BUILD_ENVOY_SETTINGS
+x-front-envoy: &BUILD_FRONT_ENVOY_SETTINGS
   context: ../
-  dockerfile: build/docker/envoy.Dockerfile
+  dockerfile: build/docker/dev.envoy.Dockerfile
   target: local_envoy
+
+x-mysql-envoy: &BUILD_MYSQL_ENVOY_SETTINGS
+  context: ../
+  dockerfile: build/docker/dev.mysql.envoy.Dockerfile
+  target: local_mysql_envoy
 
 x-db: &BUILD_MYSQL_SETTINGS
   context: ../
@@ -30,13 +35,25 @@ services:
     container_name: front_proxy
     platform: linux/amd64
     build:
-      <<: *BUILD_ENVOY_SETTINGS
+      <<: *BUILD_FRONT_ENVOY_SETTINGS
     ports:
       - "9900:9900"
       - "8081:8081"
     restart: always
     volumes:
-      - ../deployment/proxy/envoy.yaml:/etc/envoy/envoy.yaml # DEBUG
+      - ../deployment/proxy/envoy.dev.yaml:/etc/envoy/envoy.dev.yaml # DEBUG
+
+  mysql_proxy:
+    container_name: mysql_proxy
+    platform: linux/amd64
+    build:
+      <<: *BUILD_MYSQL_ENVOY_SETTINGS
+    ports:
+      - "9901:9901"
+      - "3307:3307"
+    restart: always
+    volumes:
+      - ../deployment/proxy/mysql_envoy.dev.yaml:/etc/envoy/mysql_envoy.dev.yaml # DEBUG
 
   insight:
     container_name: insight-tracer
@@ -60,6 +77,7 @@ services:
     restart: always 
     depends_on:
       - front_proxy
+      - mysql_proxy
 
   db:
     container_name: mysql_db
