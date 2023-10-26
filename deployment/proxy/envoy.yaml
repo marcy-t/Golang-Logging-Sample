@@ -1,5 +1,3 @@
-
-
 static_resources:
   listeners:
   - address:
@@ -12,9 +10,9 @@ static_resources:
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
           stat_prefix: ingress_http
-          codec_type: AUTO # AUTO or HTTP1 or HTTP2
+          codec_type: HTTP1 # AUTO or HTTP1 or HTTP2
           route_config:
-            name: local_route
+            name: local_route 
             virtual_hosts:
             - name: local_service
               domains: ["*"]
@@ -25,6 +23,8 @@ static_resources:
                   cluster: insight_tracer_cluster
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           access_log:
           - name: envoy.access_loggers.file
             typed_config:
@@ -35,12 +35,16 @@ static_resources:
     connect_timeout: 60s
     type: strict_dns
     lb_policy: round_robin
-    hosts:
-    - socket_address:
-        address: insight-tracer  # アップストリームサービスのホスト名
-        port_value: 8080     # アップストリームサービスのポート番号
-
-admin:
+    load_assignment:
+      cluster_name: insight_tracer_cluster
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: insight-tracer  # アップストリームサービスのホスト名
+                port_value: 8080     # アップストリームサービスのポート番号
+admin: #DEBUG
   access_log_path: "/tmp/admin_access.log"
   address:
     socket_address:

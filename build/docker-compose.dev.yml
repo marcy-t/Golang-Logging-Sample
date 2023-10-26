@@ -27,7 +27,7 @@ x-db: &BUILD_MYSQL_SETTINGS
 
 services:
   envoy:
-    container_name: envoy
+    container_name: front_proxy
     platform: linux/amd64
     build:
       <<: *BUILD_ENVOY_SETTINGS
@@ -59,7 +59,7 @@ services:
       - "9091:8080"
     restart: always 
     depends_on:
-      - envoy
+      - front_proxy
 
   db:
     container_name: mysql_db
