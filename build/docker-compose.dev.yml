@@ -26,7 +26,7 @@ x-db: &BUILD_MYSQL_SETTINGS
   target: local_db
 
 services:
-  envoy:
+  front_proxy:
     container_name: front_proxy
     platform: linux/amd64
     build:
