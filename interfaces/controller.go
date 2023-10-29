@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Golang-Logging-Sample/domain"
 	db "github.com/Golang-Logging-Sample/pkg/interfaces/database"
 	"github.com/Golang-Logging-Sample/pkg/logger"
 	"github.com/Golang-Logging-Sample/usecase"
@@ -42,17 +43,12 @@ func NewController(SqlHandler db.SqlHandler) (cc *CommonController) {
 */
 
 // GET /ping
-func (cc *CommonController) SampleHandler(w http.ResponseWriter, r *http.Request) (err error) {
+func (cc *CommonController) SampleHandler(w http.ResponseWriter, r *http.Request) (appResp *domain.ApplicationResponse, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 180*time.Second)
 	defer cancel()
 
 	// Single Tags
 	logger.Info("111", "GET /api/v1//ping")
-
-	tags := []*logger.Tag{
-		logger.NewTag("Request", r.URL),
-		logger.NewTag("Method", r.Method),
-	}
 
 	// Debig
 	hostUrl := cc.Converter.ToSampleEntity("http://hogehoge.com")
@@ -63,27 +59,20 @@ func (cc *CommonController) SampleHandler(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		logger.Error(
 			logger.GetApplicationError(err).ErrorResponseJSON(w, r),
-			tags...,
+			// tags...,
 		)
 		return
 	}
 
 	convData := cc.Converter.ToSampleResponseData(resp)
 
-	appResp := &logger.ApplicationResponse{
+	appResp = &domain.ApplicationResponse{
 		Type:       "SampleHandler Response",
 		StatusCode: http.StatusOK,
 		AppCode:    "xxxxxx", // 設計時になんのアプリケーションか連番ふる
-		Level:      logger.INFO,
-		Message:    "Find Users successfully.",
+		Message:    convData,
 	}
 
-	logger.ResponseJSON(
-		w,
-		convData,
-		appResp,
-		tags...,
-	)
 	return
 }
 
@@ -92,7 +81,7 @@ func (cc *CommonController) TagList(w http.ResponseWriter, r *http.Request) (err
 	// ctx, cancel := context.WithTimeout(context.Background(), 180*time.Second)
 	// defer cancel()
 
-	logger.Info("111", "GET /api/v1//taglist")
+	logger.Info("111", "GET /api/v1/taglist")
 
 	// tags := []*logger.Tag{
 	// 	logger.NewTag("taglistStatus", "Enable"),

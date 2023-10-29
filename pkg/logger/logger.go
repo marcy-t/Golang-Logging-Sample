@@ -44,7 +44,7 @@ const (
 )
 
 /*
-	Zap Logger
+Zap Logger
 */
 func NewLogger() error {
 	loc, err := time.LoadLocation(os.Getenv("TZ"))
@@ -110,7 +110,7 @@ func ResponseJSON(w http.ResponseWriter, object interface{}, appResp *Applicatio
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(resp)))
 	w.Header().Set("Access-Control-Allow-Headers", "*")
-	w.Header().Set("Access-Control-Allow-Origin", "*") // debug用
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	w.WriteHeader(appResp.StatusCode)
 	w.Write(resp)
