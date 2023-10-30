@@ -6,7 +6,8 @@ static_resources:
           address: "0.0.0.0" # リッスンするIPアドレス
           port_value: 3307 # リッスンするポート番号
       filter_chains:
-        - filters:
+        - filters: 
+        # MySQL proxy https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/network_filters/mysql_proxy_filter#mysql-proxy
             - name: envoy.filters.network.tcp_proxy
               typed_config:
                 "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy"
@@ -26,6 +27,16 @@ static_resources:
                     socket_address:
                       address: mysql_db  # アップストリームサービスのホスト名(Container Name)
                       port_value: 3306 # アップストリームサービスのポート番号
+      # circuit_breakers:https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/circuit_breaker.proto
+      circuit_breakers: # リクエスト処理制御 インフラ環境に合わせて可変
+        thresholds: # リクエスト処理制御の閾値
+          - priority: DEFAULT # 閾値を適用するリクエストの優先度
+            max_connections: 100 # アップストリームクラスタに接続する最大コネクション数を設定する
+            max_connection_pools: 10 # アップストリームクラスタに接続する最大コネクションプール数を設定する
+            max_pending_requests: 1000 # アップストリームクラスタに許可する保留中のリクエストの最大数
+            max_requests: 30 # 最大リクエスト数を設定
+            max_retries: 3 # 最大リトライ数を設定
+
 admin: #DEBUG
   access_log_path: "/tmp/admin_access.log"
   address:
