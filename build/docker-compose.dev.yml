@@ -56,7 +56,7 @@ services:
       - ../deployment/proxy/mysql_envoy.dev.yaml:/etc/envoy/mysql_envoy.dev.yaml # DEBUG
 
   insight:
-    container_name: insight-tracer
+    container_name: insight-trace-analyzer
     image: insight-dev:latest
     platform: linux/amd64
     build:

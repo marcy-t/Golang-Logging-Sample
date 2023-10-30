@@ -20,7 +20,7 @@ static_resources:
               - match:
                   prefix: "/api/insight/v1"  # API Version
                 route:
-                  cluster: insight_tracer_cluster
+                  cluster: insight-trace-analyzer-cluster
                   retry_policy: # リトライポリシー
                     retry_on: 5xx,gateway-error,connect-failure
                     num_retries: 5
@@ -36,28 +36,39 @@ static_resources:
               "@type": type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog
               path: "/tmp/access.log" # 開発環境用デバッグ アクセスログの出力先
   clusters:
-  - name: insight_tracer_cluster
+  - name: insight-trace-analyzer-cluster
     connect_timeout: 60s
     type: strict_dns
     lb_policy: round_robin
     load_assignment:
-      cluster_name: insight_tracer_cluster
+      cluster_name: insight-trace-analyzer-cluster
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: insight-tracer  # アップストリームサービスのホスト名(Container Name)
+                address: insight-trace-analyzer  # アップストリームサービスのホスト名(Container Name)
                 port_value: 8080     # アップストリームサービスのポート番号
-    health_checks:
+    health_checks: # ヘルスチェック:インフラ環境に合わせtて可変
       timeout: 10s
       interval: 60s
-      unhealthy_threshold: 2
-      healthy_threshold: 2
+      unhealthy_threshold: 3 # ヘルスチェックが連続して失敗する回数がこの閾値を超えた場合、アップストリームホストは[UNHEALTHY]状態になります。
+      healthy_threshold: 3 # ヘルスチェックが連続して成功する回数がこの閾値を超えた場合、アップストリームホストは[HEALTHY]状態になります。
       http_health_check:
-        path: /api/insight/v1/ping
+        path: /api/insight/v1/ping # ヘルスチェックのパス
         codec_client_type: HTTP1
         expected_statuses:
+          start: 200
+          end: 226
+    # circuit_breakers:https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/circuit_breaker.proto
+    circuit_breakers: # リクエスト処理制御 インフラ環境に合わせて可変
+      thresholds: # リクエスト処理制御の閾値
+        - priority: DEFAULT # 閾値を適用するリクエストの優先度
+          max_connections: 100 # アップストリームクラスタに接続する最大コネクション数を設定する
+          max_connection_pools: 10 # アップストリームクラスタに接続する最大コネクションプール数を設定する
+          max_pending_requests: 1000 # アップストリームクラスタに許可する保留中のリクエストの最大数
+          max_requests: 30 # 最大リクエスト数を設定
+          max_retries: 3 # 最大リトライ数を設定
 admin: #DEBUG
   access_log_path: "/tmp/admin_access.log"
   address:
